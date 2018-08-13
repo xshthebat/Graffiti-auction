@@ -6,14 +6,11 @@ import io from 'socket.io-client';
 import { connect } from 'react-redux';
 import { updataperson, gamestart } from '../../store/actions'
 import Timer from '../Timer/Timer'
+// import {Route} from 'react-router-dom';
+import {Control} from 'react-keeper';
+import Timeback from '../base/Timeback';
 require('./Gameroom.styl')
 
-function Timeback({ time, show }) {
-  if (!show) {
-    return null;
-  }
-  return (<div className="timeback"><i></i><p className="p1"></p> <p className="p2"></p><p className="p3"></p><p className="timeword">{time}S</p></div>)
-}
 function Readybutton({ state, click, show }) {
   if (!show) {
     return null;
@@ -47,15 +44,18 @@ class Gameroom extends Component {
       time: 30,
       myself: null,
       myindex: -1,
-      timm:120
+      timm:5
     }
   }
   componentWillMount() {
     console.log(this.props);
+    //这里要考虑很多 尤其是 gamestate
     if (this.props.personname === '') {
-      this.props.history.push('/');
+      // this.props.history.push('/');
+      Control.go('/home');
       return;
     }
+    this.props.gamestart('getready');
     axios.get('http://localhost:8881/getroom').then(res => {
       let socket = io.connect('ws://localhost:8881');
       this.setState({ socket: socket, room: res.data.room, position: res.data.position })
@@ -91,13 +91,13 @@ class Gameroom extends Component {
             }
             if (!back) {
               clearInterval(this.timer);
-              this.setState({timm:20});
               this.pause = true;
               return;
             }
             if (this.state.time === 0 && back) {
               this.state.socket.close();
-              this.props.history.push('/');
+              // this.props.history.push('/');
+              Control.go('/home')
               return;
             }
             if (this.state.myself.gamestate === 'getready' && next.state === 'getready' && this.pause) {
@@ -117,7 +117,8 @@ class Gameroom extends Component {
                     clearInterval(this.timer);
                     this.state.socket.close();
                     console.log('退出');
-                    this.props.history.push('/');
+                    // this.props.history.push('/');
+                    Control.go('/home');
                   }
                 })
               }, 1000);
@@ -134,7 +135,8 @@ class Gameroom extends Component {
   }
   back = () => {
     this.state.socket.close();
-    this.props.history.push('/');
+    // this.props.history.push('/');
+    Control.go('/home')
   }
   readclick = () => {
     if (this.state.myself.gamestate === 'getready') {
@@ -160,6 +162,9 @@ class Gameroom extends Component {
     if (this.props.state === 'gamestart') {
       return '游戏马上开始'
     }
+    if(this.props.state === 'drawstart'){
+      return '请等待其他人画完'
+    }
   }
   timeshow = () => {
     if (this.props.state === 'getready') {
@@ -169,15 +174,30 @@ class Gameroom extends Component {
     clearInterval(this.timer);
     return false
   }
+  timeout = ()=>{
+    if(this.props.state === 'gamestart'){
+      this.props.gamestart('drawstart');
+      this.setState({timm:120});
+      console.log('开启画板');
+      Control.go('/gameroom/drawboard')
+    } 
+    else if(this.props.state === 'drawstart'){
+      console.log('拍卖开始');
+    }
+    // this.props.history.push('/gameroom/drawboard');
+  }
   render() {
     return (
       <div className="Gameroom">
         <i className="back" onClick={this.back}></i>
-        <Timeback time={this.state.time} show={this.timeshow()} />
+        <div className="gameroomtime"><Timeback time={this.state.time} show={this.timeshow()} /></div>
         <p className="roomnumber">{`${this.state.room}号房间`}</p>
         <Text text={this.gettext()} />
         <div className="theTimer"> 
-        <Timer time={this.state.timm}></Timer>
+        
+         { this.props.state === 'gamestart'||this.props.state ==='drawstart'?
+              <Timer time={this.state.timm} callback={this.timeout}></Timer>:null
+        }
         </div>
         <Readybutton state={this.state.myself} click={() => { this.readclick() }} show={this.timeshow()} />
         <Messagebox socket={this.state.socket} />

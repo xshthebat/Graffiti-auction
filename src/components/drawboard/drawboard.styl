@@ -1,0 +1,85 @@
+.drawboard
+ position fixed
+ top: 0
+ height 100vh;
+ width: 100%
+ background-color: #ffdcd0
+ z-index: 30;
+.drawhead
+  display flex
+  justify-content: center
+.drawboardtime
+ position relative
+ display inline-block
+ top 0.6rem
+.drawboardback
+ position absolute;
+ left 0
+ top 0
+ width: 2rem
+ height 2rem
+ background  url('../../common/image/homeback.svg'); 
+ margin 0.5rem 0 0 0.2rem;
+.drawhead
+ position relative
+ background-color: #ffb497;
+ height 3rem;
+.drawfinish
+ position: absolute
+ right: 0.5rem
+ font-size: 1rem;
+ line-height: 3rem;
+ height 3rem;
+.drawbottom
+ position absolute;
+ bottom 0
+ width: 100%
+ .drawcolor
+  height 3rem
+  width: 100%
+  background-color:  red
+ .handle
+  height 3rem
+  width: 100%
+  background-color: #E3E3E3
+  position relative
+  .handle_left
+    width: 42%
+    height 100%
+    display flex;
+    align-items: center
+   .point_size
+    width 2rem
+    height 2rem
+    display flex;
+    margin-left: 0.5rem
+    align-items: center
+    justify-content: center
+    i
+     background-color: #000000
+     border-radius: 50%
+   .size_handle
+    height 2rem
+    width: 100%
+    position relative
+    display flex;
+    align-items: center
+    .size_bar
+     height 1.5rem
+     width: 1.5rem
+     background-color: #000000
+     position absolute
+     border-radius: 50%
+     left 0.75rem;
+    .all_progress
+      border 1.5px solid #B8B8B8;
+      width 80%
+      margin 0 10%
+    .size_progress
+      border-top:  1.5px solid #000000;
+      border-bottom: 1.5px solid #000000;
+      position absolute
+      left 10%;
+      width: 50%;
+
+

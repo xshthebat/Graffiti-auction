@@ -3,6 +3,7 @@ import Button from '../Button/Button';
 import {connect} from 'react-redux';
 import {changename} from '../../store/actions';
 import checkname from '../../api/checkname';
+import {Control} from 'react-keeper';
 require('./Homepage.styl');
 class Getname extends Component {
   constructor(props) {
@@ -50,7 +51,9 @@ class Home extends Component {
       if(!res.data.err){
         this.setState({show:false},()=>{
           this.props.changename(name);
-          this.props.history.push('/gameroom')
+          console.log(this);
+          // this.props.history.push('/gameroom')
+          Control.go('/gameroom');
         });
       } else{
         console.log('请重新输入');
