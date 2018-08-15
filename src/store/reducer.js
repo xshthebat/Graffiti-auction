@@ -24,4 +24,12 @@ const state = (state = 'getready', action) => {
             return state
     }
 }
-export { person, personname, state }
+const time = (state = '-1',action)=>{
+    switch(action.type){
+        case 'set_time':
+        return action.time
+        default:
+        return state
+    }
+}
+export { person, personname, state ,time}

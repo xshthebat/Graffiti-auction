@@ -22,3 +22,9 @@ export const gamestart = (state) => {
         state: state
     }
 }
+export const setime = (time)=>{
+    return {
+        type:'set_time',
+        time:time
+    }
+}

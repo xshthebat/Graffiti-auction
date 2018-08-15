@@ -4,7 +4,7 @@ import Messageinput from '../Messageinput/Messageinput';
 import axios from "axios";
 import io from 'socket.io-client';
 import { connect } from 'react-redux';
-import { updataperson, gamestart } from '../../store/actions'
+import { updataperson, gamestart,setime} from '../../store/actions'
 import Timer from '../Timer/Timer'
 // import {Route} from 'react-router-dom';
 import {Control} from 'react-keeper';
@@ -43,12 +43,10 @@ class Gameroom extends Component {
       position: null,
       time: 30,
       myself: null,
-      myindex: -1,
-      timm:5
+      myindex: -1
     }
   }
   componentWillMount() {
-    console.log(this.props);
     //这里要考虑很多 尤其是 gamestate
     if (this.props.personname === '') {
       // this.props.history.push('/');
@@ -65,10 +63,26 @@ class Gameroom extends Component {
       socket.on('getpersons', (data) => {
         this.props.updataperson(data);
       })
+      
       socket.on('gamestart', () => {
         console.log('游戏开始 初始化');
         console.log(this.props.person[this.state.myindex]);
         this.props.gamestart('gamestart');
+      })
+      socket.on('readytime', (data) => {
+        this.props.setime(data);
+        // console.log(this.props.time);
+      })
+      socket.on('drawstart', () => {
+        this.props.gamestart('drawstart');
+      })
+      socket.on('drawtime', (data) => {
+        this.props.setime(data);
+        // console.log(this.props.time);
+      })
+      socket.on('drawtimeout',()=>{
+        this.props.gamestart('drawend');
+        Control.go('/gameroom')
       })
     })
   }
@@ -76,9 +90,10 @@ class Gameroom extends Component {
     let thename = next.personname;
     let persons = next.person;
     let back = false;
+    this.timeout();
     persons.forEach((person, index) => {
       if (person.name === thename) {
-        console.log(person.name, thename);
+        // console.log(person.name, thename);
         this.setState({ myself: person, myindex: index }, () => {
           if (this.timer) {
             clearInterval(this.timer)
@@ -162,8 +177,11 @@ class Gameroom extends Component {
     if (this.props.state === 'gamestart') {
       return '游戏马上开始'
     }
-    if(this.props.state === 'drawstart'){
+    if(this.props.state === 'finishdraw'){
       return '请等待其他人画完'
+    }
+    if(this.props.state === 'drawend'){
+      return '开始拍卖'
     }
   }
   timeshow = () => {
@@ -175,14 +193,14 @@ class Gameroom extends Component {
     return false
   }
   timeout = ()=>{
-    if(this.props.state === 'gamestart'){
-      this.props.gamestart('drawstart');
-      this.setState({timm:120});
-      console.log('开启画板');
+    if(this.props.state === 'drawstart'){;
+      // console.log('开启画板');
       Control.go('/gameroom/drawboard')
     } 
-    else if(this.props.state === 'drawstart'){
+    else if(this.props.state === 'sadas'){
       console.log('拍卖开始');
+    } else if(this.props.state === 'finishdraw'){
+      Control.go('/gameroom')
     }
     // this.props.history.push('/gameroom/drawboard');
   }
@@ -195,8 +213,8 @@ class Gameroom extends Component {
         <Text text={this.gettext()} />
         <div className="theTimer"> 
         
-         { this.props.state === 'gamestart'||this.props.state ==='drawstart'?
-              <Timer time={this.state.timm} callback={this.timeout}></Timer>:null
+         { (this.props.state === 'gamestart'||this.props.state ==='drawstart'||this.props.state==='finishdraw')&&this.props.time!=='-1'?
+              <Timer time={this.props.time} ></Timer>:null
         }
         </div>
         <Readybutton state={this.state.myself} click={() => { this.readclick() }} show={this.timeshow()} />
@@ -210,10 +228,12 @@ class Gameroom extends Component {
 const mapStateProps = (state, ownProps) => ({
   personname: state.personname,
   person: state.person,
-  state: state.state
+  state: state.state,
+  time:state.time
 })
 const mapDispatchToProps = {
   updataperson,
-  gamestart
+  gamestart,
+  setime
 }
 export default connect(mapStateProps, mapDispatchToProps)(Gameroom);
