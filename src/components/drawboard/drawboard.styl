@@ -36,6 +36,14 @@
 .drawbox 
  width: 100%
  height 70%
+ display flex 
+ justify-content: center
+ align-items: center
+ canvas 
+  background:#fff
+ .draw
+   height 92%
+   width 92%
 .drawbottom
  position absolute;
  bottom 0
@@ -59,6 +67,30 @@
   width: 100%
   background-color: #E3E3E3
   position relative
+  display: flex
+  .handle_right
+    width: 58%
+    height 100%
+    display flex
+    justify-content space-between
+    align-items: center
+    i
+     height 2rem
+     width 2rem
+    .pen
+     background  url('../../common/image/pen.svg'); 
+    .penblack
+     background  url('../../common/image/penblack.svg');
+    .wipe
+     background  url('../../common/image/wipe.svg');
+    .wipeblack
+     background  url('../../common/image/wipeblack.svg');
+    .backout
+     background  url('../../common/image/backout.svg'); 
+    .go
+     background: url('../../common/image/go.svg');
+    .delete
+     background: url('../../common/image/delete.svg');
   .handle_left
     width: 42%
     height 100%
