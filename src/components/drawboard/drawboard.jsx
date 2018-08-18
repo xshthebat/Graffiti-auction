@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Control } from 'react-keeper';
+// import { Control } from 'react-keeper';
 import Timeback from '../base/Timeback'
 import { gamestart } from '../../store/actions'
 require('./drawboard.styl');
@@ -10,11 +10,13 @@ class Drawboard extends Component {
     this.state = {
       size: 6,
       color: '#000000',
-      drawState: 'draw'
+      drawState: 'draw',
+      index:0
     }
     this.colormap = ['#000000', '#e11b5e', '#ff9800', '#FFFF00', '#8bc34a', '#00BCD4', '#2196F3']
     this.savedraw = []
     this.Revoke = []
+    this.finish = []
   }
   componentDidMount() {
     let barWidth = this.refs.bar.clientWidth / 2;
@@ -23,6 +25,22 @@ class Drawboard extends Component {
     this.refs.bar.style.left = `${this.left}px`;
     this.right = allWidth - barWidth;
     this.initcanvas()
+  }
+  finishit =()=>{
+    //保存这张图 然后清空 canvas以及缓存栈
+    this.refs.canvas.toBlob((blob)=>{
+      this.finish.push(blob);
+      this.savedraw = []
+      this.Revoke = []
+      this.ctx.clearRect(0, 0, this.refs.canvas.offsetWidth, this.refs.canvas.offsetHeight);
+      this.ctx.fillStyle = "#fff";
+      this.ctx.fillRect(0, 0, this.refs.canvas.width, this.refs.canvas.height)
+    })
+    if(this.state.index===0){
+      this.setState({index:1})
+      return
+    }
+    console.log(this.finish);
   }
   initcanvas() {
     this.refs.canvas.width = this.refs.draw.offsetWidth;
@@ -41,7 +59,7 @@ class Drawboard extends Component {
       if (this.state.drawState !== 'draw'){
         this.ctx.strokeStyle = '#fff';
       }
-      if (e.touches.length == 1) {
+      if (e.touches.length === 1) {
         let touch = e.touches[0];
         let ctx = this.ctx;
         let canvas = this.refs.canvas;
@@ -130,7 +148,7 @@ class Drawboard extends Component {
     this.props.gamestart('finishdraw')
   }
   start = (e) => {
-    this.startX = e.touches[0].pageX - (parseInt(this.refs.bar.style.left.split('px')[0]));
+    this.startX = e.touches[0].pageX - (parseInt(this.refs.bar.style.left.split('px')[0],10));
   }
   move = (e) => {
     let left = e.touches[0].pageX - this.startX;
@@ -159,10 +177,11 @@ class Drawboard extends Component {
         <div className="drawhead">
           <i className="drawboardback" onClick={this.back}></i>
           <div className="drawboardtime"><Timeback time={this.props.time} show={true}></Timeback></div>
-          <p className="drawfinish">完成</p>
+          <p className="drawfinish" onClick={this.finishit}>完成</p>
         </div>
         <div className="drawname">
-
+            <p className="pname">{`图(${this.state.index+1}/2):${this.props.person[this.props.personindex].picture[this.state.index]}`}</p>
+            <p className="finishnane">完成请点右上角</p>
         </div>
         <div className="drawbox">
           <div className="draw" ref="draw">
@@ -208,7 +227,8 @@ const mapStateProps = (state, ownProps) => ({
   personname: state.personname,
   person: state.person,
   state: state.state,
-  time: state.time
+  time: state.time,
+  personindex:state.personindex
 })
 const mapDispatchToProps = {
   gamestart

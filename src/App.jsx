@@ -3,10 +3,6 @@ import Homepage from './components/Homepage/Homepage';
 import Gameroom from './components/Gameroom/Gameroom';
 import { HashRouter,Route} from 'react-keeper';
 import Drawboard from './components/drawboard/drawboard';
-const homecheck = (nextState, replace)=>{
-    console.log(nextState);
-    console.log('haha'); 
-}
 export default class App extends React.Component {
     render() {
         return (

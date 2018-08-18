@@ -40,7 +40,7 @@ export default class Persons extends Component {
     let dom = this.props.persons.length ? (this.props.persons.map((item, index) => {
       if (!item.name) {
         if(this.props.gamestate!=='getready'){
-          return ;
+          return null;
         }
         return <div className="noneperson" key={index}><i></i><p>等待...</p></div>
       }

@@ -32,4 +32,12 @@ const time = (state = '-1',action)=>{
         return state
     }
 }
-export { person, personname, state ,time}
+const personindex =(state= -1,action)=>{
+    switch(action.type){
+        case "set_index":
+        return action.index
+        default:
+        return state
+    }
+}
+export { person, personname, personindex,state ,time}

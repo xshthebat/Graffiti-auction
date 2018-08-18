@@ -1,12 +1,14 @@
 import { combineReducers } from 'redux'
-import { person, personname, state,time} from './reducer'
-import { createStore, applyMiddleware } from 'redux'
-import createLogger from 'redux-logger'
+import { person, personname, personindex,state,time} from './reducer'
+import { createStore} from 'redux'
+// , applyMiddleware 
+// import createLogger from 'redux-logger'
 const rootReducer = combineReducers({
     person,
     personname,
     state,
-    time
+    time,
+    personindex
 })
 let store = createStore(rootReducer);
 // applyMiddleware(createLogger)

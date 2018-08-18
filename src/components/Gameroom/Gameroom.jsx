@@ -4,7 +4,7 @@ import Messageinput from '../Messageinput/Messageinput';
 import axios from "axios";
 import io from 'socket.io-client';
 import { connect } from 'react-redux';
-import { updataperson, gamestart,setime} from '../../store/actions'
+import { updataperson, gamestart,setime,setindex} from '../../store/actions'
 import Timer from '../Timer/Timer'
 // import {Route} from 'react-router-dom';
 import {Control} from 'react-keeper';
@@ -93,6 +93,7 @@ class Gameroom extends Component {
     this.timeout();
     persons.forEach((person, index) => {
       if (person.name === thename) {
+        this.props.setindex(index);
         // console.log(person.name, thename);
         this.setState({ myself: person, myindex: index }, () => {
           if (this.timer) {
@@ -234,6 +235,7 @@ const mapStateProps = (state, ownProps) => ({
 const mapDispatchToProps = {
   updataperson,
   gamestart,
-  setime
+  setime,
+  setindex
 }
 export default connect(mapStateProps, mapDispatchToProps)(Gameroom);

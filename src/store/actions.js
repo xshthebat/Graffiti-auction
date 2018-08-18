@@ -28,3 +28,9 @@ export const setime = (time)=>{
         time:time
     }
 }
+export const setindex = (index)=>{
+    return {
+        type:'set_index',
+        index:index
+    }
+}
