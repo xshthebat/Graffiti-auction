@@ -34,3 +34,27 @@ export const setindex = (index)=>{
         index:index
     }
 }
+export const setroom = (room)=>{
+    return {
+        type:'set_room',
+        room:room
+    }
+}
+export const setimgs = (imgs)=>{
+    return {
+        type:'set_imgs',
+        imgs:imgs
+    }
+}
+export const setimgindex  = (index)=>{
+    return {
+        type:'set_imgindex',
+        index:index
+    }
+}
+export const setimgpirce = (pirce)=>{
+    return {
+        type:'set_imgpirce',
+        pirce:pirce
+    }
+}

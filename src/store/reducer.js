@@ -1,5 +1,4 @@
 // import { combineReducers } from 'redux'
-
 const person = (state = [], action) => {
     switch (action.type) {
         case 'update_person':
@@ -40,4 +39,44 @@ const personindex =(state= -1,action)=>{
         return state
     }
 }
-export { person, personname, personindex,state ,time}
+const room = (state = null,action)=>{
+    switch(action.type){
+        case "set_room":
+        return action.room
+        default:
+        return state
+    }
+}
+const imgs = (state=[],action)=>{
+    switch(action.type){
+        case "set_imgs":
+        return action.imgs
+        default:
+        return state
+    }
+}
+const imgindex = (state=-1,action)=>{
+    switch(action.type){
+        case 'set_imgindex':
+        return action.index
+        default:
+        return state
+    }
+}
+const imgpirce = (state=-1,action)=>{
+    switch(action.type){
+        case 'set_imgpirce':
+        return action.pirce
+        default:
+        return state
+    }
+}
+const imggetter = (state='',action)=>{
+    switch(action.type){
+        case 'set_imggetter':
+        return action.person
+        default:
+        return state
+    }
+}
+export { person, personname, personindex,state ,time,room,imgs,imgindex,imgpirce,imggetter}

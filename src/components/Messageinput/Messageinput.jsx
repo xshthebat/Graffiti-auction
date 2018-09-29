@@ -30,7 +30,8 @@ class Messageinput extends Component {
       wranshow: false,
       textvalue: "",
       wramcancel: false,
-      time: 0
+      time: 0,
+      oldvalue:""
     }
     this.init();
   }
@@ -82,16 +83,22 @@ class Messageinput extends Component {
   }
   changeMode = () => {
     let mode = !this.state.mode;
+    console.log(mode);
     if (!mode) {
       this.setState({
         mode: mode,
-        cansend: false
+        cansend: false,
+        textvalue: '',
+        oldvalue:this.state.textvalue
       })
-      this.refs.input.value = "";
+      // this.refs.input.value = "";
     } else {
+      console.log(this.state);
       this.setState({
         mode: mode,
-        cansend: true
+        cansend: true,
+        textvalue:this.state.oldvalue,
+        oldvalue:""
       })
     }
   }

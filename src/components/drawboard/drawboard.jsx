@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 // import { Control } from 'react-keeper';
 import Timeback from '../base/Timeback'
 import { gamestart } from '../../store/actions'
+import  postimg from '../../api/postimg'
 require('./drawboard.styl');
 class Drawboard extends Component {
   constructor(props) {
@@ -35,12 +36,14 @@ class Drawboard extends Component {
       this.ctx.clearRect(0, 0, this.refs.canvas.offsetWidth, this.refs.canvas.offsetHeight);
       this.ctx.fillStyle = "#fff";
       this.ctx.fillRect(0, 0, this.refs.canvas.width, this.refs.canvas.height)
+      if(this.state.index===0){
+        this.setState({index:1})
+        return
+      }
+      console.log(this.finish);
+      //完成图画 上传到服务器 然后返回到等待页面
+      this.back();
     })
-    if(this.state.index===0){
-      this.setState({index:1})
-      return
-    }
-    console.log(this.finish);
   }
   initcanvas() {
     this.refs.canvas.width = this.refs.draw.offsetWidth;
@@ -141,11 +144,42 @@ class Drawboard extends Component {
     this.setState({drawState:'wipe'})
   }
   componentWillUnmount() {
+    if(!this.post ){
+        let self = this;
+        console.log(this.finish)
+        if(!this.finish.length){
+           this.refs.canvas.toBlob((blob)=>{
+          this.finish.push(blob);
+          this.finish.push(blob);
+          postimg(this.finish,this.props.room,this.props.personname).then((res)=>{
+            console.log(res,this);
+          });
+        })
+        } else if(this.finish.length===1){
+           this.refs.canvas.toBlob((blob)=>{
+          this.finish.push(blob);
+          postimg(this.finish,this.props.room,this.props.personname).then((res)=>{
+            console.log(res);
+          });
+        })
+        } else{
+            postimg(this.finish,this.props.room,this.props.personname).then((res)=>{
+            console.log(res);
+          });
+        }
+    
+        console.log('自动上传');
+      }
     console.log('画画结束,上传');
   }
   back = () => {
     //改变状态
-    this.props.gamestart('finishdraw')
+    //上传逻辑
+      postimg(this.finish,this.props.room,this.props.personname).then((res)=>{
+        console.log(res);
+        this.props.gamestart('finishdraw')
+      });
+      this.post  = true;
   }
   start = (e) => {
     this.startX = e.touches[0].pageX - (parseInt(this.refs.bar.style.left.split('px')[0],10));
@@ -180,7 +214,7 @@ class Drawboard extends Component {
           <p className="drawfinish" onClick={this.finishit}>完成</p>
         </div>
         <div className="drawname">
-            <p className="pname">{`图(${this.state.index+1}/2):${this.props.person[this.props.personindex].picture[this.state.index]}`}</p>
+            <p className="pname">{`图(${this.state.index+1}/2):${this.props.person[this.props.personindex].picture[this.state.index].name}`}</p>
             <p className="finishnane">完成请点右上角</p>
         </div>
         <div className="drawbox">
@@ -228,7 +262,8 @@ const mapStateProps = (state, ownProps) => ({
   person: state.person,
   state: state.state,
   time: state.time,
-  personindex:state.personindex
+  personindex:state.personindex,
+  room:state.room
 })
 const mapDispatchToProps = {
   gamestart

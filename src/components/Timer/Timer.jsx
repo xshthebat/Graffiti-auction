@@ -10,7 +10,7 @@ export default class Timer extends Component {
     //判断位数;
       return (
         <div className="Timer">
-         <p>{this.props.time-1}</p>
+         <p>{this.props.time}</p>
         </div>
       )
   }

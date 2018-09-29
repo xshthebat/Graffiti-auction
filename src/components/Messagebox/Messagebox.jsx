@@ -30,7 +30,8 @@ class Messagebox extends Component {
       next.socket.on('sendvideo', (src) => {
         let message = this.state.message.slice(0);
         let name = src.split(':')[0];
-        let url = `http://localhost:8881\\${src.split('public\\')[1]}`;
+        console.log(src.split('public/')[1]);
+        let url = `http://localhost:8881/${src.split('public/')[1]}`;
         message.push({name:name,src:url});
         this.setState({message:message},()=>{
           if(this.refs.scroll.clientHeight<this.refs.scrollbox.clientHeight){

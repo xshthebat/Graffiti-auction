@@ -4,7 +4,7 @@ import Messageinput from '../Messageinput/Messageinput';
 import axios from "axios";
 import io from 'socket.io-client';
 import { connect } from 'react-redux';
-import { updataperson, gamestart,setime,setindex} from '../../store/actions'
+import { updataperson, gamestart,setime,setindex,setroom,setimgs,setimgindex,setimgpirce} from '../../store/actions'
 import Timer from '../Timer/Timer'
 // import {Route} from 'react-router-dom';
 import {Control} from 'react-keeper';
@@ -56,6 +56,7 @@ class Gameroom extends Component {
     this.props.gamestart('getready');
     axios.get('http://localhost:8881/getroom').then(res => {
       let socket = io.connect('ws://localhost:8881');
+      this.props.setroom(res.data.room);
       this.setState({ socket: socket, room: res.data.room, position: res.data.position })
       socket.on('connect', () => {
         socket.emit('joinroom', { room: res.data.room, position: res.data.position, name: this.props.personname });
@@ -77,12 +78,33 @@ class Gameroom extends Component {
         this.props.gamestart('drawstart');
       })
       socket.on('drawtime', (data) => {
+        let self = this;
         this.props.setime(data);
-        // console.log(this.props.time);
       })
       socket.on('drawtimeout',()=>{
         this.props.gamestart('drawend');
+        console.log('时间到,开始拍卖');
         Control.go('/gameroom')
+      })
+      socket.on('buystart',(data)=>{
+        //这里触发一个action 设置图片
+        console.log(this.props);
+        this.props.gamestart('buystart');
+        this.props.setimgs(data);
+        console.log('游戏开始');
+      })
+      socket.on('lindex',()=>{
+        console.log('dasda');
+      })
+      socket.on('setpicuresindex',(index)=>{
+        console.log('设置画作:',index);
+        //设置画作
+        this.props.setimgindex(index);
+      })
+      socket.on('setpicurespirce',(pirce)=>{
+        console.log('设置价格:',pirce);
+        //设置画作
+        this.props.setimgpirce(pirce);
       })
     })
   }
@@ -179,7 +201,7 @@ class Gameroom extends Component {
       return '游戏马上开始'
     }
     if(this.props.state === 'finishdraw'){
-      return '请等待其他人画完'
+      return '其他人马上就完成作品了'
     }
     if(this.props.state === 'drawend'){
       return '开始拍卖'
@@ -194,7 +216,7 @@ class Gameroom extends Component {
     return false
   }
   timeout = ()=>{
-    if(this.props.state === 'drawstart'){;
+    if(this.props.state === 'drawstart'){
       // console.log('开启画板');
       Control.go('/gameroom/drawboard')
     } 
@@ -211,13 +233,16 @@ class Gameroom extends Component {
         <i className="back" onClick={this.back}></i>
         <div className="gameroomtime"><Timeback time={this.state.time} show={this.timeshow()} /></div>
         <p className="roomnumber">{`${this.state.room}号房间`}</p>
-        <Text text={this.gettext()} />
-        <div className="theTimer"> 
-        
-         { (this.props.state === 'gamestart'||this.props.state ==='drawstart'||this.props.state==='finishdraw')&&this.props.time!=='-1'?
-              <Timer time={this.props.time} ></Timer>:null
-        }
+        {(this.props.state === 'gamestart'||this.props.state ==='drawstart'||this.props.state==='finishdraw')&&this.props.time!=='-1'?
+        <div className="theTimer"><Timer time={this.props.time} ></Timer> </div>:null}
+        {this.props.imgindex!==-1?(
+        <div className="picture">
+           <div className="pricebox">
+           <p className="pricebox_p1">{`(1/${this.props.imgs.length})当前价格:`}</p>
+           <p className="pricebox_p2">{`500¥`}</p>
+           </div>
         </div>
+        ):<Text text={this.gettext()} />}
         <Readybutton state={this.state.myself} click={() => { this.readclick() }} show={this.timeshow()} />
         <Messagebox socket={this.state.socket} />
         <Messageinput socket={this.state.socket} />
@@ -230,12 +255,21 @@ const mapStateProps = (state, ownProps) => ({
   personname: state.personname,
   person: state.person,
   state: state.state,
-  time:state.time
+  time:state.time,
+  room:state.room,
+  imgs:state.imgs,
+  imgindex:state.imgindex,
+  imgpirce:state.imgpirce,
+  imggetter:state.imggetter
 })
 const mapDispatchToProps = {
   updataperson,
   gamestart,
   setime,
-  setindex
+  setindex,
+  setroom,
+  setimgs,
+  setimgindex,
+  setimgpirce
 }
 export default connect(mapStateProps, mapDispatchToProps)(Gameroom);
