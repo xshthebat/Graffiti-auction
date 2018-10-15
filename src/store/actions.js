@@ -22,6 +22,12 @@ export const gamestart = (state) => {
         state: state
     }
 }
+export const reset = (time)=>{
+    return {
+        type:'default',
+        time:time
+    }
+}
 export const setime = (time)=>{
     return {
         type:'set_time',
@@ -56,5 +62,17 @@ export const setimgpirce = (pirce)=>{
     return {
         type:'set_imgpirce',
         pirce:pirce
+    }
+}
+export const setgetters = (person)=>{
+    return {
+        type:'set_imggetter',
+        person:person
+    }
+}
+export const settip = (tip)=>{
+    return {
+        type:'set_tip',
+        tip:tip
     }
 }

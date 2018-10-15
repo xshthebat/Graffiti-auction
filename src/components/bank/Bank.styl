@@ -1,0 +1,120 @@
+.bank_boxs
+ height 100vh
+ width 100vw
+ position fixed
+ top 0;
+ display flex
+ align-items center
+ justify-content center
+.bank
+ width 90%
+ position relative
+ height 60vh
+ background: #13a6f8
+ border-radius 0.5rem
+ .land
+  height 20%
+  width 100%
+  background #272c37
+  border-radius 0.5rem 0.5rem  0 0
+ .shark
+  width 100%
+  display flex
+  position absolute
+  top 0
+  z-index 30
+  justify-content: center
+  img 
+   width 60%
+   height 60%
+   z-index 30
+  .shark_shadows
+   position absolute
+   width 40%;
+   height 18%;
+   background-color: #1095e0
+   bottom -10%
+   border-radius 60%
+   z-index 20
+ .wave_container 
+  margin 0 auto
+  width 100%
+  height 14%
+  overflow hidden
+  position relative
+ .wave
+  width 90vw;
+  height 90vw;
+  background-color: 13a6f8;
+  border-radius: 50%;
+  position relative
+  top -260%
+  &::before,&::after
+    content: ""
+    position: absolute
+    width 180vw
+    height  180vw
+    top 0
+    left 50%
+    background-color: #206a9a
+    border-radius: 46%
+    transform translate(-50%, -70%) rotate(0)
+    animation rotate 6s linear infinite
+    z-index 10
+  &::after 
+    border-radius: 47%;
+    background-color: #272c37;
+    transform: translate(-50%, -70%) rotate(0);
+    animation: rotate 10s linear -5s infinite;
+    z-index: 20;
+  @keyframes rotate 
+    50% 
+     transform: translate(-50%, -73%) rotate(180deg)
+    100% 
+     transform: translate(-50%, -70%) rotate(360deg)
+.bank_name
+ position relative;
+ top 10%;
+ display flex;
+ flex-direction column;
+ align-items center;
+ height 30%;
+ .b_p_1
+  font-size: 2rem;
+  font-weight bold;
+ .b_p_2
+  margin-top 1vh;
+  font-size 1rem;
+  color #fff;
+ .b_p_3
+  margin-top 1vh;
+  color: #74c4fa;
+.bank_button
+  top 10%
+  position relative
+  height 26%
+  display flex;
+  justify-content: center;
+  align-items: center;
+.bank_b
+  width 15rem;
+  height 2.5rem;
+  color: #fff;
+  background-color: #5ac8c0;
+  border-color: #5ac8c0;
+  outline: 0;
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 400;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid #5ac8c0;
+  white-space: nowrap;
+  user-select: none;
+  font-size: 1rem;
+  border-radius: 2rem;
+  span 
+   font-weight bold;
+

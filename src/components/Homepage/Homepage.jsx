@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import Button from '../Button/Button';
 import {connect} from 'react-redux';
-import {changename} from '../../store/actions';
+import {changename,settip} from '../../store/actions';
 import checkname from '../../api/checkname';
 import {Control} from 'react-keeper';
+import Bank from '../bank/Bank';
 require('./Homepage.styl');
 class Getname extends Component {
   constructor(props) {
@@ -72,7 +73,7 @@ class Home extends Component {
           <Button name="开始匹配" callback={this.setname} />
         </div>
         <div className="Button_home2" >
-          <Button name="游戏教程" callback={() => console.log("2")} />
+          <Button name="游戏教程" callback={() => this.props.settip({show:!this.props.tip.show,message:'测试代码'})} />
         </div>
         <Getname submit={this.getname} show={this.state.show} back={this.back}/>
       </div>
@@ -81,9 +82,11 @@ class Home extends Component {
 }
 
 const mapStateProps = (state,ownProps)=>({
-  personname:state.personname
+  personname:state.personname,
+  tip:state.tip
 })
 const mapDispatchToProps = {
-  changename
+  changename,
+  settip
 }
 export default connect(mapStateProps,mapDispatchToProps)(Home);

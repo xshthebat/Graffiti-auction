@@ -2,12 +2,23 @@
   height 100%
   width 100%
   position relative
-  display flex;
-  justify-content: center;
-  // align-items: center;
+.gameroomHeader
+ position relative
+ height 8%
+ width 100%
+ display flex
+ justify-content: center
+ align-items center
+ text-align center
+.gameroomMiddle
+ position relative
+ height 62%
+ width 100%
+ display flex
+ justify-content center
+ align-items center
 .roomnumber
- display inline-block;
- margin-top 0.5rem
+ display inline-block
  font-size: 1.3rem;
  height 2rem;
  line-height: 2rem;
@@ -20,8 +31,6 @@
  background  url('../../common/image/homeback.svg'); 
  margin 0.5rem 0 0 0.2rem;
 .readybutton
-  position absolute;
-  margin-top: 60%
   height:6.25rem;
   width:6.25rem;
   border-radius:100%;
@@ -96,19 +105,49 @@
   z-index 20
 .gameroomtime
  position absolute
- top 0.6rem
  left 2.2rem
 .picture
  position absolute
- top 3rem
  width 100%
- height 45%
+ height 100%
 .pricebox 
+ display flex
+ align-items: center
+ justify-content: center
+ height 15%
  p 
-  font-size: 1.5rem
+  font-size 1.5rem
+  line-height 2rem
   display inline-block
  .pricebox_p1
   color: brown
  .pricebox_p2
-  margin-left: 0.5rem
+  margin-left 0.5rem
+  font-weight: bold 
   color:blue
+ .pricebox_p3
+  margin-left 0.5rem
+  font-weight: bold 
+  font-size 1rem
+  color:#000
+.picturebox
+ display flex
+ justify-content: center
+ height: 50%
+ .thepicture
+  width 50%
+.buttonbox
+  height 35%
+  width 100%
+ .buttonwrap_1,.buttonwrap_2
+  width 80%
+  padding 0  10%
+  height 50%
+  display flex
+.gamebottons
+ width (100/3)%
+ height 100%
+ display flex
+ position relative
+ justify-content center
+ align-items center

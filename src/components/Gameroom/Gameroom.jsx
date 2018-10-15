@@ -4,11 +4,12 @@ import Messageinput from '../Messageinput/Messageinput';
 import axios from "axios";
 import io from 'socket.io-client';
 import { connect } from 'react-redux';
-import { updataperson, gamestart,setime,setindex,setroom,setimgs,setimgindex,setimgpirce} from '../../store/actions'
+import { updataperson, gamestart,setime,setindex,setroom,setimgs,setimgindex,setimgpirce,setgetters,settip,reset} from '../../store/actions'
 import Timer from '../Timer/Timer'
-// import {Route} from 'react-router-dom';
 import {Control} from 'react-keeper';
 import Timeback from '../base/Timeback';
+import Gamebotton from '../base/gamebotton/Gamebotton';
+import Bank from '../bank/Bank';
 require('./Gameroom.styl')
 
 function Readybutton({ state, click, show }) {
@@ -43,7 +44,8 @@ class Gameroom extends Component {
       position: null,
       time: 30,
       myself: null,
-      myindex: -1
+      myindex: -1,
+      bankshow:false
     }
   }
   componentWillMount() {
@@ -64,7 +66,9 @@ class Gameroom extends Component {
       socket.on('getpersons', (data) => {
         this.props.updataperson(data);
       })
-      
+      socket.on('getmoney',(data)=>{
+        this.setState({bankshow:false});
+      })
       socket.on('gamestart', () => {
         console.log('游戏开始 初始化');
         console.log(this.props.person[this.state.myindex]);
@@ -78,7 +82,6 @@ class Gameroom extends Component {
         this.props.gamestart('drawstart');
       })
       socket.on('drawtime', (data) => {
-        let self = this;
         this.props.setime(data);
       })
       socket.on('drawtimeout',()=>{
@@ -105,6 +108,21 @@ class Gameroom extends Component {
         console.log('设置价格:',pirce);
         //设置画作
         this.props.setimgpirce(pirce);
+      })
+      socket.on('setgetters',(person)=>{
+        console.log('设置拥有者:',person);
+        //设置画作
+        if(person===-1){
+          this.props.setgetters('');
+        } else{
+          this.props.setgetters(this.props.person[person]);
+        }
+      })
+      socket.on('theonequite',()=>{
+          this.state.socket.close();
+          this.props.reset();
+          Control.go('/home')
+          this.props.settip({show:true,message:'队友退出,强制解散房间'});
       })
     })
   }
@@ -139,7 +157,9 @@ class Gameroom extends Component {
               return;
             }
             if (this.state.myself.gamestate === 'getready' && next.state === 'getready' && this.pause) {
-         
+              if (this.timer) {
+                clearInterval(this.timer)
+              }
               this.timer = setInterval(() => {
                 let time = this.state.time;
                 time = time - 1;
@@ -163,6 +183,7 @@ class Gameroom extends Component {
               return ;
             }
             this.setState({ time: time });
+            console.log('haha');
           }, 1000);
         })
       }
@@ -173,10 +194,11 @@ class Gameroom extends Component {
   }
   back = () => {
     this.state.socket.close();
-    // this.props.history.push('/');
+    this.props.reset();
     Control.go('/home')
   }
   readclick = () => {
+    clearInterval(this.timer);
     if (this.state.myself.gamestate === 'getready') {
       //准备
       this.state.socket.emit('ready');
@@ -230,22 +252,50 @@ class Gameroom extends Component {
   render() {
     return (
       <div className="Gameroom">
-        <i className="back" onClick={this.back}></i>
-        <div className="gameroomtime"><Timeback time={this.state.time} show={this.timeshow()} /></div>
-        <p className="roomnumber">{`${this.state.room}号房间`}</p>
+        <div className="gameroomHeader">
+         <i className="back" onClick={this.back}></i>
+         <div className="gameroomtime"><Timeback time={this.state.time} show={this.timeshow()} /></div>
+         <p className="roomnumber">{`${this.state.room}号房间`}</p>
+        </div>
+        <div className="gameroomMiddle">
         {(this.props.state === 'gamestart'||this.props.state ==='drawstart'||this.props.state==='finishdraw')&&this.props.time!=='-1'?
         <div className="theTimer"><Timer time={this.props.time} ></Timer> </div>:null}
         {this.props.imgindex!==-1?(
         <div className="picture">
            <div className="pricebox">
-           <p className="pricebox_p1">{`(1/${this.props.imgs.length})当前价格:`}</p>
-           <p className="pricebox_p2">{`500¥`}</p>
+           <p className="pricebox_p1">{`(${this.props.imgindex+1}/${this.props.imgs.length})当前价格:`}</p>
+           <p className="pricebox_p2">{`${this.props.imgpirce}¥`}</p>
+           {this.props.imggetter?(<p className="pricebox_p3">{`${this.props.imggetter.name}`}</p>):null}
+           </div>
+           <div className="picturebox">
+            <img className="thepicture" src={`http://localhost:8881/${this.props.imgs[this.props.imgindex].path.split('public/')[1]}`}/>
+           </div>
+           <div className="buttonbox">
+            <div className="buttonwrap_1">
+             <div className="gamebottons"><Gamebotton name={`${this.props.imgpirce+100}¥`} callback = {()=>{this.state.socket.emit('setprice',this.props.imgpirce+100)}} disable={this.props.imggetter.name===this.props.personname||this.props.person[this.props.personindex].money<this.props.imgpirce+100} color={'glue'}/></div>
+             <div className="gamebottons"><Gamebotton name={`${this.props.imgpirce+200}¥`} callback = {()=>{this.state.socket.emit('setprice',this.props.imgpirce+200)}} disable={this.props.imggetter.name===this.props.personname||this.props.person[this.props.personindex].money<this.props.imgpirce+200} color={'glue'}/></div>
+             <div className="gamebottons"><Gamebotton name={`${this.props.imgpirce+300}¥`} callback = {()=>{this.state.socket.emit('setprice',this.props.imgpirce+300)}} disable={this.props.imggetter.name===this.props.personname||this.props.person[this.props.personindex].money<this.props.imgpirce+300} color={'glue'}/></div>
+            </div>
+            <div className="buttonwrap_2">
+             <div className="gamebottons"><Gamebotton name={'银行'} callback = {()=>{
+               if(this.props.person[this.props.personindex].money<this.props.imgpirce+300){
+                this.setState({bankshow:!this.state.bankshow})
+              } else{
+                this.props.settip({show:true,message:'金额足够无法贷款'});
+              }
+            }
+              } disable={false} color={'blue'}/></div>
+             <div className="gamebottons"><Gamebotton name={'线索'} callback = {()=>{console.log(5)}} disable={false} color={'pink'}/></div>
+             <div className="gamebottons"><Gamebotton name={'道具'} callback = {()=>{console.log(6)}} disable={false} color={'orange'}/></div> 
+            </div>
            </div>
         </div>
         ):<Text text={this.gettext()} />}
         <Readybutton state={this.state.myself} click={() => { this.readclick() }} show={this.timeshow()} />
+        </div>
         <Messagebox socket={this.state.socket} />
         <Messageinput socket={this.state.socket} />
+        <Bank  socket={this.state.socket} show={this.state.bankshow}/>
       </div>
     )
   }
@@ -260,7 +310,8 @@ const mapStateProps = (state, ownProps) => ({
   imgs:state.imgs,
   imgindex:state.imgindex,
   imgpirce:state.imgpirce,
-  imggetter:state.imggetter
+  imggetter:state.imggetter,
+  personindex:state.personindex
 })
 const mapDispatchToProps = {
   updataperson,
@@ -270,6 +321,9 @@ const mapDispatchToProps = {
   setroom,
   setimgs,
   setimgindex,
-  setimgpirce
+  setimgpirce,
+  setgetters,
+  settip,
+  reset
 }
 export default connect(mapStateProps, mapDispatchToProps)(Gameroom);

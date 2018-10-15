@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 // import { Control } from 'react-keeper';
 import Timeback from '../base/Timeback'
-import { gamestart } from '../../store/actions'
+import { gamestart,settip } from '../../store/actions'
 import  postimg from '../../api/postimg'
 require('./drawboard.styl');
 class Drawboard extends Component {
@@ -12,7 +12,8 @@ class Drawboard extends Component {
       size: 6,
       color: '#000000',
       drawState: 'draw',
-      index:0
+      index:0,
+      back:false
     }
     this.colormap = ['#000000', '#e11b5e', '#ff9800', '#FFFF00', '#8bc34a', '#00BCD4', '#2196F3']
     this.savedraw = []
@@ -20,15 +21,26 @@ class Drawboard extends Component {
     this.finish = []
   }
   componentDidMount() {
+    console.log(this);
     let barWidth = this.refs.bar.clientWidth / 2;
     let allWidth = Math.ceil(this.refs.all.offsetWidth);
     this.left = barWidth;
     this.refs.bar.style.left = `${this.left}px`;
     this.right = allWidth - barWidth;
     this.initcanvas()
+    this.setState({back:false})
   }
   finishit =()=>{
     //保存这张图 然后清空 canvas以及缓存栈
+    // console.log(this.savedraw.);
+    if(!this.savedraw.length){
+      console.log('画作为空');
+      this.props.settip({
+        show:true,
+        message:'画作不能为空'
+      })
+      return; //这里弹出提示
+    }
     this.refs.canvas.toBlob((blob)=>{
       this.finish.push(blob);
       this.savedraw = []
@@ -40,7 +52,8 @@ class Drawboard extends Component {
         this.setState({index:1})
         return
       }
-      console.log(this.finish);
+      this.setState({back:true})
+    
       //完成图画 上传到服务器 然后返回到等待页面
       this.back();
     })
@@ -144,7 +157,8 @@ class Drawboard extends Component {
     this.setState({drawState:'wipe'})
   }
   componentWillUnmount() {
-    if(!this.post ){
+    console.log(this.state.socket);
+    if(!this.post){
         let self = this;
         console.log(this.finish)
         if(!this.finish.length){
@@ -217,13 +231,15 @@ class Drawboard extends Component {
             <p className="pname">{`图(${this.state.index+1}/2):${this.props.person[this.props.personindex].picture[this.state.index].name}`}</p>
             <p className="finishnane">完成请点右上角</p>
         </div>
-        <div className="drawbox">
+        {this.state.back?null:(
+          <div className="drawbox">
           <div className="draw" ref="draw">
             <canvas height="100%" width="100%" ref="canvas" onTouchStart={this.startDraw}>
               <span>亲，您的浏览器不支持canvas，换个浏览器试试吧！</span>
             </canvas>
           </div>
         </div>
+        )}
         <div className="drawbottom">
           <div className="drawcolor">
             <ul className="colormap">
@@ -266,6 +282,7 @@ const mapStateProps = (state, ownProps) => ({
   room:state.room
 })
 const mapDispatchToProps = {
-  gamestart
+  gamestart,
+  settip
 }
 export default connect(mapStateProps, mapDispatchToProps)(Drawboard);
