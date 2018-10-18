@@ -6,6 +6,7 @@
  display flex
  align-items center
  justify-content center
+ background-color: rgba(0, 0, 0, 0.5)
 .bank
  width 90%
  position relative
@@ -117,4 +118,27 @@
   border-radius: 2rem;
   span 
    font-weight bold;
+.bank_back
+ position absolute 
+ margin-left 50%;
+ left -18px;
+ bottom -15%;
+.bank-enter {
+    opacity: 0;
+}
+  
+.bank-enter.bank-enter-active {
+    opacity: 1;
+    transition: opacity 200ms ease;
+}
+  
+.bank-exit {
+    opacity: 1;
+}
+  
+.bank-exit.bank-exit-active {
+    opacity: 0;
+    transition: opacity 200ms ease;
+}
+ 
 

@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux'
-import { person, personname, personindex,state,time,room,imgs,imgindex,imgpirce,imggetter,tip} from './reducer'
+import { person, personname, personindex,state,time,room,imgs,imgindex,imgpirce,imggetter,tip,propstate,propsindex} from './reducer'
 import { createStore,applyMiddleware} from 'redux' //,applyMiddleware
 import createLogger from 'redux-logger'
 const rootReducer = combineReducers({
@@ -13,7 +13,9 @@ const rootReducer = combineReducers({
     imgindex,
     imgpirce,
     imggetter,
-    tip
+    tip,
+    propstate,
+    propsindex
 })
 let store = createStore(rootReducer,applyMiddleware(createLogger));
 export default store

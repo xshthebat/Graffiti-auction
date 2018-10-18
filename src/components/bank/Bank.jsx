@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 let {CSSTransition} = require('react-transition-group');
 require('./Bank.styl');
 let img = require('../../common/image/shark.png')
+let backimg = require('../../common/image/bank_back.svg');
 class Bank extends Component{
     constructor(props) {
         super(props);
@@ -33,6 +34,7 @@ class Bank extends Component{
                            <div className="bank_button">
                                 <button className="bank_b" onClick={()=>{this.setmoney()}}><span>1000¥</span></button>
                            </div>
+                           <div className="bank_back" onClick={()=>{this.props.back()}}><img src={backimg} /></div>
                         </div>
                     </div>
                 </CSSTransition>

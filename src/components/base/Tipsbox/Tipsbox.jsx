@@ -21,9 +21,9 @@ class Tipbox extends Component {
     }
     render() {
         return (
-            <CSSTransition in={this.props.show} timeout={{enter:200,exit:200}} classNames={'example'} unmountOnExit={true}>
+            <CSSTransition in={this.props.show} timeout={{enter:200,exit:100}} classNames={'example'} unmountOnExit={true}>
                <div className={`tipbox`}>
-                    <div className={`tip_ms_b`}><p>{this.props.message}</p></div>
+                    <div className={typeof this.props.message ==='string'?`tip_ms_b`:'tip_ms_b_nocenter'}><p className="tip_mes">{this.props.message}</p></div>
                 </div>
             </CSSTransition> 
             )

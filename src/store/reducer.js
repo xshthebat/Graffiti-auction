@@ -110,4 +110,25 @@ const tip = (state={show:false,message:''},action)=>{
         return state
     }
 }
-export { person, personname, personindex,state ,time,room,imgs,imgindex,imgpirce,imggetter,tip}
+const propstate = (state=null,action)=>{
+    switch(action.type){
+        case 'set_propstate':
+        return action.state;
+        case 'default':
+        return null;
+        default:
+        return state;
+    }
+}
+const propsindex = (state=-1,action)=>{
+    switch (action.type) {
+        case 'set_propsindex':
+        return action.state;
+        case 'default':
+        return -1;
+        default:
+        return state;
+            
+    }
+}
+export { person, personname, personindex,state ,time,room,imgs,imgindex,imgpirce,imggetter,tip,propstate,propsindex}

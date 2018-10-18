@@ -76,3 +76,15 @@ export const settip = (tip)=>{
         tip:tip
     }
 }
+export const setpropstate = (state)=>{
+    return {
+        type:'set_propstate',
+        state:state
+    }
+}
+export const setpropsindex = (index)=>{
+    return {
+        type:'set_propsindex',
+        state:index
+    }
+}

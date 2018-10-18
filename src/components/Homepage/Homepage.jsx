@@ -4,7 +4,6 @@ import {connect} from 'react-redux';
 import {changename,settip} from '../../store/actions';
 import checkname from '../../api/checkname';
 import {Control} from 'react-keeper';
-import Bank from '../bank/Bank';
 require('./Homepage.styl');
 class Getname extends Component {
   constructor(props) {
