@@ -11,6 +11,7 @@ class Bank extends Component{
     }
     setmoney(){
         console.log('发送请求加钱');
+        this.props.decnum()
         this.props.socket.emit('getmoney',this.props.personindex);
     }
     render(){

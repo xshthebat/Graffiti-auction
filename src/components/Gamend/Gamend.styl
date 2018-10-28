@@ -1,0 +1,106 @@
+.gamend_boxs
+ height 100vh
+ width 100vw
+ position fixed
+ top 0;
+ display flex
+ align-items center
+ justify-content center
+ background-color: rgba(0, 0, 0, 0.5)
+.gamend
+ width 80%;
+ background-color: #282a2c
+ border-radius: 0.5rem
+ position relative
+.gamend_top
+ width 100%
+ height 8vh
+ background-color #5cdee4;
+ border-radius: 0.5rem 0.5rem 0 0
+ display flex
+ align-items center
+ justify-content center
+ color #ffffff
+ font-size 1.2rem
+.gamend_back
+ position absolute 
+ margin-left 50%; 
+ left -18px;
+ bottom -22%;
+.rankbox
+ display flex
+ justify-content center
+ align-items: center
+ padding 2vh 0
+ border-bottom:0.1rem solid #000
+ &:nth-last-child(1)
+  border-bottom 0;
+.money
+ width:50%;
+ p
+  color: #ffffff
+  text-align: center
+  font-weight: bolder
+  font-size: 1.4rem
+.rank_person
+ color:#fff
+ display flex
+ justify-content: space-around;
+ align-items: center;
+ width 50%
+ .rank_person_name
+  position absolute
+  left -20%
+  width 140%
+  font-size: 0.6rem
+  bottom: -0.3rem
+  text-align: center
+  background-color: #666666
+  border-radius: 0.3rem
+
+ .rank
+  height: 3.2rem;
+  width: 3.2rem;
+  font-size: 1.8rem;
+  text-align: center;
+  line-height: 3.2rem;
+  color #9a9a9a;
+.rank_first
+ background-image:url('../../common/image/rank_first.svg');
+ background-repeat:no-repeat
+ background-position center
+.rank_img
+ position: relative;
+ width: 3rem;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ height: 3rem;
+ img
+  width 3rem;
+  height 3rem;
+  display block
+  background-color: blue
+.rank_person_img1
+ background  url('../../common/image/personicon1.svg') no-repeat center
+.rank_person_img2
+ background  url('../../common/image/personicon2.svg') no-repeat center
+.rank_person_img3
+ background  url('../../common/image/personicon3.svg') no-repeat center
+.rank_person_img4
+ background  url('../../common/image/personicon4.svg') no-repeat center
+.rank_person_img5
+ background  url('../../common/image/personicon5.svg') no-repeat center
+.gamend-enter.gamend-enter-active {
+    opacity: 1;
+    transition: opacity 200ms ease;
+}
+  
+.gamend-exit {
+    opacity: 1;
+}
+  
+.gamend-exit.gamend-exit-active {
+    opacity: 0;
+    transition: opacity 200ms ease;
+}

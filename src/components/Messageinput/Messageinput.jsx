@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 // import { withRouter } from "react-router-dom";
 import postvideo from '../../api/postvideo';
+import { connect } from 'react-redux';
+import { settip } from '../../store/actions';
 require('./Messageinput.styl')
 function Text({ mode, touchstart, touchmove, touchend }) {
   if (mode) {
     return null
   } else {
-    return (<p className="hold_handle" onTouchStart={touchstart} onTouchMove={touchmove} onTouchEnd={touchend}>长按说话</p>)
+    return (<p className="hold_handle" onTouchStart={()=>{touchstart()}} onTouchMove={touchmove} onTouchEnd={touchend}>长按说话</p>)
   }
 }
 function Timewran({ time, cancel, show }) {
@@ -52,7 +54,7 @@ class Messageinput extends Component {
               return ; 
             }
             if(this.state.time<=2){
-              console.log('时间过短');
+              this.props.settip({show:true,message:'时间过短'});
               return ; 
             }
             console.log('发送');
@@ -68,6 +70,7 @@ class Messageinput extends Component {
       }
       catch (e) {
         console.log(e);
+        this.cannot = true;
         console.log('设备不支持');
       }
     }
@@ -127,6 +130,11 @@ class Messageinput extends Component {
     })
   }
   showwrann = () => {
+    if(this.cannot){
+      // alert(this.cannot);
+      this.props.settip({show:true,message:'该设备不支持语音'})
+      return ;
+    }
     console.log('开始录制');
     this.setState({
       wranshow: true,
@@ -141,6 +149,9 @@ class Messageinput extends Component {
     })
   }
   disshowwrann = () => {
+    if(this.cannot){
+      return ;
+    }
     if (this.state.wramcancel) {
       this.setState({
         wranshow: false,
@@ -164,6 +175,9 @@ class Messageinput extends Component {
     }
   }
   wranncancel = (e) => {
+    if(this.cannot){
+      return ;
+    }
     if (e.touches[0].clientY < document.body.clientHeight - this.refs.Messageinput.clientHeight) {
       this.setState({
         wramcancel: true
@@ -188,4 +202,11 @@ class Messageinput extends Component {
     )
   }
 }
-export default Messageinput
+
+const mapStateProps = (state) => ({
+  tip: state.tip
+})
+const mapDispatchToProps = {
+  settip
+}
+export default connect(mapStateProps, mapDispatchToProps)(Messageinput);

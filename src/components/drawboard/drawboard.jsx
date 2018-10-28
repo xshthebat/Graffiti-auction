@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 // import { Control } from 'react-keeper';
 import Timeback from '../base/Timeback'
-import { gamestart,settip } from '../../store/actions'
-import  postimg from '../../api/postimg'
+import { gamestart, settip } from '../../store/actions'
+import postimg from '../../api/postimg'
 require('./drawboard.styl');
 class Drawboard extends Component {
   constructor(props) {
@@ -12,8 +12,8 @@ class Drawboard extends Component {
       size: 6,
       color: '#000000',
       drawState: 'draw',
-      index:0,
-      back:false
+      index: 0,
+      back: false
     }
     this.colormap = ['#000000', '#e11b5e', '#ff9800', '#FFFF00', '#8bc34a', '#00BCD4', '#2196F3']
     this.savedraw = []
@@ -21,39 +21,56 @@ class Drawboard extends Component {
     this.finish = []
   }
   componentDidMount() {
-    console.log(this);
-    let barWidth = this.refs.bar.clientWidth / 2;
-    let allWidth = Math.ceil(this.refs.all.offsetWidth);
-    this.left = barWidth;
-    this.refs.bar.style.left = `${this.left}px`;
-    this.right = allWidth - barWidth;
-    this.initcanvas()
-    this.setState({back:false})
+    if (!HTMLCanvasElement.prototype.toBlob) {
+      Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
+        value: function (callback, type, quality) {
+
+          var binStr = atob(this.toDataURL(type, quality).split(',')[1]),
+            len = binStr.length,
+            arr = new Uint8Array(len);
+
+          for (var i = 0; i < len; i++) {
+            arr[i] = binStr.charCodeAt(i);
+          }
+
+          callback(new Blob([arr], { type: type || 'image/png' }));
+        }
+      });
+    }
+    if(this.refs.bar){
+      let barWidth = this.refs.bar.clientWidth / 2;
+      let allWidth = Math.ceil(this.refs.all.offsetWidth);
+      this.left = barWidth;
+      this.refs.bar.style.left = `${this.left}px`;
+      this.right = allWidth - barWidth;
+      this.initcanvas()
+      this.setState({ back: false })
+    }
   }
-  finishit =()=>{
+  finishit = () => {
     //保存这张图 然后清空 canvas以及缓存栈
     // console.log(this.savedraw.);
-    if(!this.savedraw.length){
+    if (!this.savedraw.length) {
       console.log('画作为空');
       this.props.settip({
-        show:true,
-        message:'画作不能为空'
+        show: true,
+        message: '画作不能为空'
       })
       return; //这里弹出提示
     }
-    this.refs.canvas.toBlob((blob)=>{
+    this.refs.canvas.toBlob((blob) => {
       this.finish.push(blob);
       this.savedraw = []
       this.Revoke = []
       this.ctx.clearRect(0, 0, this.refs.canvas.offsetWidth, this.refs.canvas.offsetHeight);
       this.ctx.fillStyle = "#fff";
       this.ctx.fillRect(0, 0, this.refs.canvas.width, this.refs.canvas.height)
-      if(this.state.index===0){
-        this.setState({index:1})
+      if (this.state.index === 0) {
+        this.setState({ index: 1 })
         return
       }
-      this.setState({back:true})
-    
+      this.setState({ back: true })
+
       //完成图画 上传到服务器 然后返回到等待页面
       this.back();
     })
@@ -68,38 +85,40 @@ class Drawboard extends Component {
   }
   startDraw = (e) => {
     // if (this.state.drawState === 'draw') {
-      //画画
-      this.ctx.lineWidth = this.state.size;
-      this.ctx.strokeStyle = this.state.color;
+    //画画
+    this.ctx.lineWidth = this.state.size;
+    this.ctx.strokeStyle = this.state.color;
 
-      if (this.state.drawState !== 'draw'){
-        this.ctx.strokeStyle = '#fff';
+    if (this.state.drawState !== 'draw') {
+      this.ctx.strokeStyle = '#fff';
+    }
+    if (e.touches.length === 1) {
+      let touch = e.touches[0];
+      let ctx = this.ctx;
+      let canvas = this.refs.canvas;
+      // let self = this;
+      ctx.beginPath();
+      ctx.moveTo(touch.clientX - canvas.offsetLeft, touch.clientY - canvas.offsetTop);
+      let handlemove = (e) => {
+        let newtouche = e.touches[0];
+        ctx.lineTo(newtouche.clientX - canvas.offsetLeft, newtouche.clientY - canvas.offsetTop);
+        ctx.stroke();
+        e.preventDefault();
       }
-      if (e.touches.length === 1) {
-        let touch = e.touches[0];
-        let ctx = this.ctx;
-        let canvas = this.refs.canvas;
-        // let self = this;
-        ctx.beginPath();
-        ctx.moveTo(touch.clientX - canvas.offsetLeft, touch.clientY - canvas.offsetTop);
-        let handlemove = (e) => {
-          let newtouche = e.touches[0];
-          ctx.lineTo(newtouche.clientX - canvas.offsetLeft, newtouche.clientY - canvas.offsetTop);
-          ctx.stroke();
-        }
-        let handleend = (e) => {
-          ctx.closePath();
-          let src = canvas.toDataURL("image/jpeg");
-          this.savedraw.push(src);
-          canvas.removeEventListener('touchmove', handlemove);
-          canvas.removeEventListener('touchend', handleend);
-        }
-        canvas.addEventListener('touchmove', handlemove, false)
-        canvas.addEventListener('touchend', handleend, false)
+      let handleend = (e) => {
+        ctx.closePath();
+        let src = canvas.toDataURL("image/jpeg");
+        this.savedraw.push(src);
+        canvas.removeEventListener('touchmove', handlemove);
+        canvas.removeEventListener('touchend', handleend);
+        e.preventDefault();
       }
+      canvas.addEventListener('touchmove', handlemove, false)
+      canvas.addEventListener('touchend', handleend, false)
+    }
     // }
   }
-  delete = ()=>{
+  delete = () => {
     this.ctx.clearRect(0, 0, this.refs.canvas.offsetWidth, this.refs.canvas.offsetHeight);
     this.ctx.fillStyle = "#fff";
     this.ctx.fillRect(0, 0, this.refs.canvas.width, this.refs.canvas.height)
@@ -134,69 +153,68 @@ class Drawboard extends Component {
       this.savedraw.push(imgsrc); //再推入
     }
   }
-  go = ()=>{
-    if(!this.Revoke.length){
+  go = () => {
+    if (!this.Revoke.length) {
       return  //垃圾栈为空
-    } 
+    }
     let imgsrc = this.Revoke.pop() //垃圾栈出 保存栈入
     let img = new Image();
-      img.onload = () => {
-        // console.log(img);
-        this.ctx.clearRect(0, 0, this.refs.canvas.offsetWidth, this.refs.canvas.offsetHeight);
-        this.ctx.fillStyle = "#fff";
-        this.ctx.fillRect(0, 0, this.refs.canvas.width, this.refs.canvas.height)
-        this.ctx.drawImage(img, 0, 0, this.refs.canvas.offsetWidth, this.refs.canvas.offsetHeight);
-      }
-      img.src = imgsrc;
-      this.savedraw.push(imgsrc); //再推入
+    img.onload = () => {
+      // console.log(img);
+      this.ctx.clearRect(0, 0, this.refs.canvas.offsetWidth, this.refs.canvas.offsetHeight);
+      this.ctx.fillStyle = "#fff";
+      this.ctx.fillRect(0, 0, this.refs.canvas.width, this.refs.canvas.height)
+      this.ctx.drawImage(img, 0, 0, this.refs.canvas.offsetWidth, this.refs.canvas.offsetHeight);
+    }
+    img.src = imgsrc;
+    this.savedraw.push(imgsrc); //再推入
   }
-  choosepen = ()=>{
-    this.setState({drawState:'draw'})
+  choosepen = () => {
+    this.setState({ drawState: 'draw' })
   }
-  choosewipe = ()=>{
-    this.setState({drawState:'wipe'})
+  choosewipe = () => {
+    this.setState({ drawState: 'wipe' })
   }
   componentWillUnmount() {
-    console.log(this.state.socket);
-    if(!this.post){
-        let self = this;
-        console.log(this.finish)
-        if(!this.finish.length){
-           this.refs.canvas.toBlob((blob)=>{
+    if (!this.post&&this.props.time===0) {
+      let self = this;
+      console.log(this.finish)
+      if (!this.finish.length) {
+        this.refs.canvas.toBlob((blob) => {
           this.finish.push(blob);
           this.finish.push(blob);
-          postimg(this.finish,this.props.room,this.props.personname).then((res)=>{
-            console.log(res,this);
+          postimg(this.finish, this.props.room, this.props.personname).then((res) => {
+            console.log(res, this);
           });
         })
-        } else if(this.finish.length===1){
-           this.refs.canvas.toBlob((blob)=>{
+      } else if (this.finish.length === 1) {
+        this.refs.canvas.toBlob((blob) => {
           this.finish.push(blob);
-          postimg(this.finish,this.props.room,this.props.personname).then((res)=>{
+          postimg(this.finish, this.props.room, this.props.personname).then((res) => {
             console.log(res);
           });
         })
-        } else{
-            postimg(this.finish,this.props.room,this.props.personname).then((res)=>{
-            console.log(res);
-          });
-        }
-    
-        console.log('自动上传');
+      } else {
+        postimg(this.finish, this.props.room, this.props.personname).then((res) => {
+          console.log(res);
+        });
       }
+
+      console.log('自动上传');
+    }
     console.log('画画结束,上传');
   }
   back = () => {
     //改变状态
     //上传逻辑
-      postimg(this.finish,this.props.room,this.props.personname).then((res)=>{
-        console.log(res);
-        this.props.gamestart('finishdraw')
-      });
-      this.post  = true;
+    postimg(this.finish, this.props.room, this.props.personname).then((res) => {
+      console.log(res);
+      this.props.gamestart('finishdraw')
+    });
+    this.post = true;
   }
   start = (e) => {
-    this.startX = e.touches[0].pageX - (parseInt(this.refs.bar.style.left.split('px')[0],10));
+    this.startX = e.touches[0].pageX - (parseInt(this.refs.bar.style.left.split('px')[0], 10));
   }
   move = (e) => {
     let left = e.touches[0].pageX - this.startX;
@@ -220,25 +238,28 @@ class Drawboard extends Component {
     });
   }
   render() {
+    if(this.props.personindex===-1){
+      return null;
+    }
     return (
       <div className="drawboard">
         <div className="drawhead">
           <i className="drawboardback" onClick={this.back}></i>
           <div className="drawboardtime"><Timeback time={this.props.time} show={true}></Timeback></div>
-          <p className="drawfinish" onClick={this.finishit}>完成</p>
+          <p className="drawfinish" onClick={() => {this.finishit() }}>完成</p>
         </div>
         <div className="drawname">
-            <p className="pname">{`图(${this.state.index+1}/2):${this.props.person[this.props.personindex].picture[this.state.index].name}`}</p>
-            <p className="finishnane">完成请点右上角</p>
+          <p className="pname">{`图(${this.state.index + 1}/2):${this.props.person[this.props.personindex].picture[this.state.index].name}`}</p>
+          <p className="finishnane">完成请点右上角</p>
         </div>
-        {this.state.back?null:(
+        {this.state.back ? null : (
           <div className="drawbox">
-          <div className="draw" ref="draw">
-            <canvas height="100%" width="100%" ref="canvas" onTouchStart={this.startDraw}>
-              <span>亲，您的浏览器不支持canvas，换个浏览器试试吧！</span>
-            </canvas>
+            <div className="draw" ref="draw">
+              <canvas height="100%" width="100%"  ref="canvas" onTouchStart={this.startDraw}>
+                <span>亲，您的浏览器不支持canvas，换个浏览器试试吧！</span>
+              </canvas>
+            </div>
           </div>
-        </div>
         )}
         <div className="drawbottom">
           <div className="drawcolor">
@@ -264,7 +285,7 @@ class Drawboard extends Component {
               <i className={this.state.drawState === 'wipe' ? "wipeblack" : "wipe"} onClick={this.choosewipe}></i>
               <i className="backout" onClick={this.backout}></i>
               <i className="go" onClick={this.go}></i>
-              <i className="delete"  onClick={this.delete}></i>
+              <i className="delete" onClick={this.delete}></i>
             </div>
           </div>
         </div>
@@ -278,8 +299,8 @@ const mapStateProps = (state, ownProps) => ({
   person: state.person,
   state: state.state,
   time: state.time,
-  personindex:state.personindex,
-  room:state.room
+  personindex: state.personindex,
+  room: state.room
 })
 const mapDispatchToProps = {
   gamestart,

@@ -5,10 +5,14 @@ import { Provider } from 'react-redux';
 import './index.styl'
 import App from './App';
 import store from './store/index';
-ReactDOM.render( 
-<Provider store = { store } >
-    <App / >
-</Provider>,
-document.getElementById('root')
+import FastClick from 'fastclick';
+document.addEventListener('DOMContentLoaded', function() {
+    FastClick.attach(document.body);
+}, false);
+ReactDOM.render(
+    <Provider store={store} >
+            <App />
+    </Provider>,
+    document.getElementById('root')
 );
-registerServiceWorker();
+{/* registerServiceWorker(); */ }

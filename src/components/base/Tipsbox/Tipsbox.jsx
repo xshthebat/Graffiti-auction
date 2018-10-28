@@ -14,7 +14,7 @@ class Tipbox extends Component {
             }
             this.timer = setTimeout(() => {
                 this.props.settip({ show: false });
-            }, 1000);
+            }, 2000);
         } else {
             return false;
         }
@@ -23,7 +23,7 @@ class Tipbox extends Component {
         return (
             <CSSTransition in={this.props.show} timeout={{enter:200,exit:100}} classNames={'example'} unmountOnExit={true}>
                <div className={`tipbox`}>
-                    <div className={typeof this.props.message ==='string'?`tip_ms_b`:'tip_ms_b_nocenter'}><p className="tip_mes">{this.props.message}</p></div>
+                    <div className={typeof this.props.message ==='string'?`tip_ms_b`:'tip_ms_b_nocenter'}><div className="tip_mes">{this.props.message}</div></div>
                 </div>
             </CSSTransition> 
             )

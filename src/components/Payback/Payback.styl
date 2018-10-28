@@ -1,0 +1,67 @@
+.Payback_boxs
+ height 100vh
+ width 100vw
+ position fixed
+ top 0;
+ display flex
+ align-items center
+ justify-content center
+ flex-direction column
+ background-color: rgba(0, 0, 0, 0.5)
+.Payback_word
+ position: relative; 
+ width: 15rem;
+ height: 3.6rem;
+ background-color: #1095e0;
+ border-radius: 1rem
+ display flex
+ align-items center
+ justify-content center
+ padding 0 1rem
+ margin-bottom 0.8rem
+ p
+  font-size: 1.8rem
+  font-weight: bolder
+  color #ffffff
+.Payback_word:after
+ content: ' ';
+ border-top: 12px solid #1095e0;
+ border-left: 12px solid transparent;
+ border-right: 12px solid transparent;
+ position: absolute;
+ bottom: -12px;
+ right 45%
+ margin-left -50%
+.Payback_shark
+ display flex
+ align-items center
+ justify-content center
+ position relative
+ img
+  width 60%
+  z-index 30
+ .payback_shadows
+   position absolute
+   width 40%;
+   height 18%;
+   background-color: #1095e0
+   bottom -10%
+   border-radius 60%
+   z-index 20
+.payback-enter {
+    opacity: 0;
+}
+  
+.payback-enter.payback-enter-active {
+    opacity: 1;
+    transition: opacity 200ms ease;
+}
+  
+.payback-exit {
+    opacity: 1;
+}
+  
+.payback-exit.payback-exit-active {
+    opacity: 0;
+    transition: opacity 200ms ease;
+}

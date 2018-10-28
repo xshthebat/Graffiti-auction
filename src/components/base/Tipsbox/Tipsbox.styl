@@ -8,8 +8,6 @@
  align-items center
  z-index 1000
 .tip_ms_b_nocenter
- min-height 5rem;
- width 50%;
  display flex
  justify-content center
  align-items center
@@ -17,6 +15,7 @@
  background-color #00000082
  color #fff
  font-size 1rem
+ position relative
 .tip_ms_b
  min-height 5rem;
  width 50%;
@@ -29,7 +28,18 @@
  font-size 1rem
  text-align center;
 .tip_mes
- margin 5px;
+ height 100%
+ width 100%
+ div
+  display flex;
+  justify-content center
+  align-items center
+  flex-direction column
+  margin 0.5rem
+  p
+   line-height 2rem
+   height 2rem
+   text-align center
 .example-enter {
     opacity: 0;
 }

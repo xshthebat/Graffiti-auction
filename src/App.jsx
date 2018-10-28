@@ -10,12 +10,12 @@ class App extends React.Component {
         return (
             <HashRouter>
             {/* <Switch> */}
-            <div className="app">
+            <React.Fragment>
             <Route exact path='/home' miss component={Homepage} />
             <Route exact cathe path="/gameroom" component={Gameroom} />
             <Route exact path="/gameroom/drawboard" component={Drawboard}/>
             <Tipbox message={this.props.tip.message} show={this.props.tip.show}></Tipbox>
-            </div>
+            </React.Fragment>
             {/* <Redirect to='/'/> */}
             {/* </Switch> */}
             </HashRouter>
