@@ -65,6 +65,7 @@ class Messageinput extends Component {
         })
         this.promise.catch((err)=>{
           console.log(err);
+          this.cannot = true;
         })
         console.log('授权录制');
       }
